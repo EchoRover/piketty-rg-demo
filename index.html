@@ -3,97 +3,271 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-<title>r &gt; g — try it</title>
+<title>r &gt; g</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,800;9..144,900&family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --red:   #c0392b;
-    --ink:   #1a1a1a;
-    --muted: #777;
-    --line:  #e5e5e5;
+    --bg:        #0d0d0f;
+    --panel:     #16161a;
+    --panel-2:   #1f1f24;
+    --line:      #2a2a30;
+    --ink:       #f4f1ea;
+    --muted:     #8a8a92;
+    --red:       #ff3b30;
+    --red-2:     #d62828;
+    --gold:      #f4d35e;
   }
-  * { box-sizing: border-box; }
-  html, body { margin: 0; padding: 0; background: #fff; color: var(--ink); font-family: 'Inter', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
-  body { padding: 22px 18px 60px; max-width: 520px; margin: 0 auto; }
-  h1 { font-size: 22px; font-weight: 800; margin: 0 0 4px; letter-spacing: -0.01em; }
-  h1 .red { color: var(--red); }
-  .sub { color: var(--muted); font-size: 13px; margin: 0 0 22px; }
-  .ratio-card { background: #fafafa; border: 1px solid var(--line); border-radius: 14px; padding: 18px; text-align: center; margin-bottom: 22px; }
-  .ratio-label { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
-  .ratio-value { font-size: 56px; font-weight: 800; color: var(--red); line-height: 1; }
-  .ratio-caption { font-size: 13px; color: var(--ink); margin-top: 8px; }
-  .scenario { font-size: 12px; color: var(--muted); margin-top: 4px; }
-  .chart-wrap { position: relative; height: 240px; margin-bottom: 22px; }
-  .slider-row { margin-bottom: 16px; }
-  .slider-row label { display: flex; justify-content: space-between; align-items: baseline; font-size: 14px; font-weight: 600; margin-bottom: 6px; }
-  .slider-row label .v { color: var(--red); font-weight: 800; font-variant-numeric: tabular-nums; }
-  .slider-row input[type=range] { width: 100%; accent-color: var(--red); height: 30px; }
-  .preset-label { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin: 18px 0 8px; text-align: center; }
-  .preset-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-  .preset-grid button { padding: 12px 8px; border: 1px solid var(--line); background: white; border-radius: 10px; font-family: inherit; font-size: 13px; font-weight: 600; color: var(--ink); cursor: pointer; -webkit-tap-highlight-color: transparent; text-align: left; }
-  .preset-grid button:active { background: #f3f3f3; }
-  .preset-grid button .name { display: block; }
-  .preset-grid button .who { display: block; font-size: 10px; color: var(--muted); font-weight: 400; margin-top: 2px; letter-spacing: 0; text-transform: none; }
-  .gap-line { font-size: 13px; color: var(--muted); text-align: center; margin: 12px 0 4px; }
-  .gap-line b { color: var(--ink); font-weight: 700; }
-  footer { margin-top: 32px; font-size: 11px; color: var(--muted); text-align: center; line-height: 1.5; }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--ink); font-family: 'Inter', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  body {
+    background:
+      radial-gradient(ellipse 80% 50% at 50% -10%, rgba(255,59,48,0.10), transparent 60%),
+      var(--bg);
+    min-height: 100vh;
+  }
+  .wrap { max-width: 540px; margin: 0 auto; padding: 28px 20px 80px; }
+
+  /* Hero */
+  .hero { margin-bottom: 28px; }
+  .eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 14px;
+  }
+  h1 {
+    font-family: 'Fraunces', serif;
+    font-weight: 900;
+    font-size: 46px;
+    line-height: 0.95;
+    letter-spacing: -0.025em;
+    margin: 0 0 12px;
+  }
+  h1 .italic { font-style: italic; font-weight: 400; }
+  h1 .gt { color: var(--red); font-style: italic; }
+  .lede { color: var(--muted); font-size: 15px; line-height: 1.5; margin: 0; max-width: 38ch; }
+
+  /* Ratio card */
+  .ratio-card {
+    margin: 28px 0 22px;
+    padding: 28px 22px;
+    background: linear-gradient(180deg, var(--panel) 0%, #121214 100%);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .ratio-card::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 50% 0%, rgba(255,59,48,0.18), transparent 70%);
+    pointer-events: none;
+  }
+  .ratio-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 10px; position: relative;
+  }
+  .ratio-value {
+    font-family: 'Fraunces', serif; font-weight: 900;
+    font-size: 84px; line-height: 1;
+    background: linear-gradient(180deg, #ff5f57 0%, #c0392b 100%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    letter-spacing: -0.03em;
+    position: relative;
+    transition: transform 0.18s cubic-bezier(.34,1.56,.64,1);
+  }
+  .ratio-value.bump { transform: scale(1.04); }
+  .ratio-caption { font-size: 14px; color: var(--ink); margin-top: 12px; line-height: 1.45; position: relative; }
+  .ratio-caption b { color: var(--red); }
+  .scenario {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px; color: var(--muted);
+    margin-top: 14px; padding-top: 14px;
+    border-top: 1px solid var(--line);
+    letter-spacing: 0.05em; position: relative;
+  }
+
+  /* Chart */
+  .chart-wrap {
+    position: relative; height: 260px;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 16px 12px 8px;
+    margin-bottom: 24px;
+  }
+
+  /* Sliders */
+  .slider-row { margin-bottom: 18px; }
+  .slider-row label {
+    display: flex; justify-content: space-between; align-items: baseline;
+    font-size: 13px; font-weight: 500; margin-bottom: 8px;
+    font-family: 'JetBrains Mono', monospace; letter-spacing: 0.02em;
+  }
+  .slider-row label .name { color: var(--muted); }
+  .slider-row label .v { color: var(--red); font-weight: 700; font-variant-numeric: tabular-nums; font-size: 14px; }
+  .slider-row input[type=range] {
+    -webkit-appearance: none; appearance: none;
+    width: 100%; height: 4px;
+    background: var(--line); border-radius: 4px;
+    outline: none;
+  }
+  .slider-row input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none; appearance: none;
+    width: 22px; height: 22px;
+    background: var(--red); border-radius: 50%;
+    cursor: pointer;
+    border: 3px solid var(--bg);
+    box-shadow: 0 0 0 1px var(--red), 0 4px 12px rgba(255,59,48,0.4);
+    transition: transform 0.15s;
+  }
+  .slider-row input[type=range]::-webkit-slider-thumb:active { transform: scale(1.2); }
+  .slider-row input[type=range]::-moz-range-thumb {
+    width: 22px; height: 22px;
+    background: var(--red); border-radius: 50%;
+    cursor: pointer; border: 3px solid var(--bg);
+    box-shadow: 0 0 0 1px var(--red), 0 4px 12px rgba(255,59,48,0.4);
+  }
+
+  .gap-line {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px; color: var(--muted);
+    text-align: center; margin: 20px 0 8px;
+    letter-spacing: 0.05em;
+  }
+  .gap-line b { color: var(--gold); font-weight: 700; }
+
+  /* Presets */
+  .preset-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--muted); margin: 28px 0 12px; text-align: center;
+  }
+  .preset-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .preset-grid button {
+    padding: 14px 12px;
+    border: 1px solid var(--line);
+    background: var(--panel);
+    border-radius: 12px;
+    font-family: inherit;
+    color: var(--ink);
+    cursor: pointer; text-align: left;
+    transition: all 0.15s;
+    position: relative; overflow: hidden;
+  }
+  .preset-grid button:hover { border-color: var(--red); transform: translateY(-1px); }
+  .preset-grid button:active { transform: translateY(0); background: var(--panel-2); }
+  .preset-grid button.active { border-color: var(--red); background: linear-gradient(180deg, rgba(255,59,48,0.08), transparent); }
+  .preset-grid button .name {
+    display: block; font-size: 14px; font-weight: 700; letter-spacing: -0.01em;
+  }
+  .preset-grid button .who {
+    display: block; font-size: 10.5px; color: var(--muted); font-weight: 400;
+    margin-top: 4px; font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* Quote */
+  .quote {
+    margin: 36px 0 8px;
+    padding: 22px 20px;
+    border-left: 3px solid var(--red);
+    background: var(--panel);
+    border-radius: 0 12px 12px 0;
+  }
+  .quote p {
+    font-family: 'Fraunces', serif; font-style: italic;
+    font-size: 16px; line-height: 1.4;
+    margin: 0 0 8px; color: var(--ink);
+  }
+  .quote cite {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px; color: var(--muted);
+    font-style: normal; letter-spacing: 0.06em;
+  }
+
+  footer {
+    margin-top: 40px;
+    padding-top: 22px;
+    border-top: 1px solid var(--line);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px; color: var(--muted);
+    text-align: center; line-height: 1.7; letter-spacing: 0.04em;
+  }
 </style>
 </head>
 <body>
 
-<h1>If <span class="red">r &gt; g</span>, the gap compounds.</h1>
-<p class="sub">Pick a scenario, or move r and g.</p>
+<div class="wrap">
 
-<div class="ratio-card">
-  <div class="ratio-label">Wealth ÷ Wages after 50 years</div>
-  <div class="ratio-value" id="ratio">110×</div>
-  <div class="ratio-caption" id="caption">The capital household ends up <b>110×</b> richer than the labour household.</div>
-  <div class="scenario" id="scenario">Scenario: The Question — ₹50 L flat vs ₹3 L wage</div>
+  <div class="hero">
+    <div class="eyebrow">— PIKETTY · Q11</div>
+    <h1>When <span class="gt">r &gt; g,</span><br><span class="italic">the gap compounds</span> forever.</h1>
+    <p class="lede">Capital grows at r. Wages grow at g. Pick a scenario — see what 50 years does to the gap.</p>
+  </div>
+
+  <div class="ratio-card">
+    <div class="ratio-label">▶ Wealth ÷ Wages · Year 50</div>
+    <div class="ratio-value" id="ratio">110×</div>
+    <div class="ratio-caption" id="caption">Capital ends up <b>110×</b> richer than labour.</div>
+    <div class="scenario" id="scenario">// THE QUESTION  ·  ₹50L flat vs ₹3L wage</div>
+  </div>
+
+  <div class="chart-wrap">
+    <canvas id="chart"></canvas>
+  </div>
+
+  <div class="slider-row">
+    <label><span class="name">r — return on capital</span><span class="v"><span id="rVal">8</span>%</span></label>
+    <input type="range" id="r" min="0" max="15" step="0.5" value="8">
+  </div>
+
+  <div class="slider-row">
+    <label><span class="name">g — wage growth</span><span class="v"><span id="gVal">4</span>%</span></label>
+    <input type="range" id="g" min="0" max="15" step="0.5" value="4">
+  </div>
+
+  <p class="gap-line">r − g = <b><span id="gap">+4</span> pp/year</b></p>
+
+  <div class="preset-label">▼ TRY A SCENARIO</div>
+  <div class="preset-grid">
+    <button data-w="50"      data-y="3" data-r="8" data-g="4" data-name="The Question" data-who="₹50L flat · ₹3L wage" class="active">
+      <span class="name">The Question</span><span class="who">₹50L flat · ₹3L wage</span>
+    </button>
+    <button data-w="3360000" data-y="6" data-r="8" data-g="5" data-name="vs Elon Musk" data-who="Tesla / X · ~$400B">
+      <span class="name">vs Elon Musk</span><span class="who">Tesla / X · ~$400B</span>
+    </button>
+    <button data-w="1840000" data-y="6" data-r="8" data-g="5" data-name="vs Jeff Bezos" data-who="Amazon · ~$220B">
+      <span class="name">vs Jeff Bezos</span><span class="who">Amazon · ~$220B</span>
+    </button>
+    <button data-w="1680000" data-y="6" data-r="8" data-g="5" data-name="vs Zuckerberg" data-who="Meta · ~$200B">
+      <span class="name">vs Zuckerberg</span><span class="who">Meta · ~$200B</span>
+    </button>
+    <button data-w="1260000" data-y="6" data-r="8" data-g="5" data-name="vs Larry Page" data-who="Google · ~$150B">
+      <span class="name">vs Larry Page</span><span class="who">Google · ~$150B</span>
+    </button>
+    <button data-w="50"      data-y="20" data-r="3" data-g="5" data-name="France 1950" data-who="g > r — labour wins">
+      <span class="name">France 1950</span><span class="who">g &gt; r — labour wins</span>
+    </button>
+  </div>
+
+  <blockquote class="quote">
+    <p>"In a quasi-stagnant society, wealth accumulated in the past will inevitably acquire disproportionate importance."</p>
+    <cite>— PIKETTY, CAPITAL IN THE 21ST CENTURY · 2014</cite>
+  </blockquote>
+
+  <footer>
+    AHUL213 MACROECONOMICS · Q11<br>
+    JAMES · EVAN · SUMEDH<br>
+    04 MAY 2026
+  </footer>
+
 </div>
-
-<div class="chart-wrap">
-  <canvas id="chart"></canvas>
-</div>
-
-<div class="slider-row">
-  <label><span>r — return on capital</span><span class="v"><span id="rVal">8</span>%</span></label>
-  <input type="range" id="r" min="0" max="15" step="0.5" value="8">
-</div>
-
-<div class="slider-row">
-  <label><span>g — wage growth</span><span class="v"><span id="gVal">4</span>%</span></label>
-  <input type="range" id="g" min="0" max="15" step="0.5" value="4">
-</div>
-
-<p class="gap-line">Gap = <b><span id="gap">+4</span> pp/year</b></p>
-
-<div class="preset-label">Try a Real-World Scenario</div>
-<div class="preset-grid">
-  <button data-w="50"        data-y="3" data-r="8"  data-g="4" data-name="The Question" data-who="₹50L flat vs ₹3L wage">
-    <span class="name">The Question</span><span class="who">₹50 L flat · ₹3 L wage</span>
-  </button>
-  <button data-w="3360000"   data-y="6" data-r="8"  data-g="5" data-name="vs Elon Musk" data-who="Tesla / X · ~$400 B">
-    <span class="name">vs Elon Musk</span><span class="who">Tesla / X · ~$400 B</span>
-  </button>
-  <button data-w="1840000"   data-y="6" data-r="8"  data-g="5" data-name="vs Jeff Bezos" data-who="Amazon · ~$220 B">
-    <span class="name">vs Jeff Bezos</span><span class="who">Amazon · ~$220 B</span>
-  </button>
-  <button data-w="1680000"   data-y="6" data-r="8"  data-g="5" data-name="vs Zuckerberg" data-who="Meta · ~$200 B">
-    <span class="name">vs Zuckerberg</span><span class="who">Meta · ~$200 B</span>
-  </button>
-  <button data-w="1260000"   data-y="6" data-r="8"  data-g="5" data-name="vs Larry Page" data-who="Google · ~$150 B">
-    <span class="name">vs Larry Page</span><span class="who">Google · ~$150 B</span>
-  </button>
-  <button data-w="50"        data-y="20" data-r="3" data-g="5" data-name="France 1950" data-who="g &gt; r — wages catch up">
-    <span class="name">France 1950</span><span class="who">g &gt; r — wages catch up</span>
-  </button>
-</div>
-
-<footer>
-  AHUL213 Macroeconomics · Q11 · James, Evan, Sumedh · 4 May 2026<br>
-  Based on Piketty, <i>Capital in the Twenty-First Century</i> (2014). Wealth figures: Forbes 2025, in ₹ lakh (1 lakh = 100 000).
-</footer>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script>
@@ -101,17 +275,17 @@
   let W0 = 50;
   let Y0 = 3;
 
-  const rEl = document.getElementById('r');
-  const gEl = document.getElementById('g');
-  const rValEl = document.getElementById('rVal');
-  const gValEl = document.getElementById('gVal');
-  const ratioEl = document.getElementById('ratio');
-  const captionEl = document.getElementById('caption');
-  const gapEl = document.getElementById('gap');
-  const scenarioEl = document.getElementById('scenario');
+  const $  = id => document.getElementById(id);
+  const rEl = $('r'), gEl = $('g');
+  const rValEl = $('rVal'), gValEl = $('gVal');
+  const ratioEl = $('ratio'), captionEl = $('caption');
+  const gapEl = $('gap'), scenarioEl = $('scenario');
 
-  const ctx = document.getElementById('chart').getContext('2d');
+  const ctx = $('chart').getContext('2d');
   const labels = Array.from({length: N + 1}, (_, i) => i);
+
+  Chart.defaults.color = '#8a8a92';
+  Chart.defaults.font.family = "'Inter', system-ui";
 
   const chart = new Chart(ctx, {
     type: 'line',
@@ -119,39 +293,40 @@
       labels,
       datasets: [
         { label: 'Capital wealth',
-          data: [], borderColor: '#c0392b',
-          backgroundColor: 'rgba(192, 57, 43, 0.08)',
-          borderWidth: 3, pointRadius: 0, fill: true, tension: 0.1 },
+          data: [],
+          borderColor: '#ff3b30',
+          backgroundColor: 'rgba(255, 59, 48, 0.12)',
+          borderWidth: 2.5, pointRadius: 0, fill: true, tension: 0.15 },
         { label: 'Labour wages',
-          data: [], borderColor: '#1a1a1a',
-          borderWidth: 3, pointRadius: 0, tension: 0.1 },
+          data: [],
+          borderColor: '#f4f1ea',
+          borderWidth: 2.5, pointRadius: 0, tension: 0.15 },
       ],
     },
     options: {
       responsive: true, maintainAspectRatio: false,
-      animation: { duration: 200 },
+      animation: { duration: 220, easing: 'easeOutCubic' },
       plugins: {
         legend: { position: 'top', align: 'start',
-                  labels: { font: { family: 'Inter', size: 11 }, boxWidth: 14, boxHeight: 8 } },
+                  labels: { color: '#8a8a92', font: { size: 10.5, weight: '500' },
+                            boxWidth: 12, boxHeight: 6, usePointStyle: false, padding: 12 } },
         tooltip: { enabled: false },
       },
       scales: {
-        y: {
-          type: 'logarithmic',
-          ticks: { font: { family: 'Inter', size: 10 }, color: '#777',
-                   callback: v => {
-                     if (v >= 1e7) return '₹' + (v/1e7).toFixed(0) + 'Cr';
-                     if (v >= 1e5) return '₹' + (v/1e5).toFixed(0) + 'kL';
-                     return '₹' + v + 'L';
-                   } },
-          grid: { color: '#f0f0f0' },
-        },
-        x: {
-          ticks: { font: { family: 'Inter', size: 10 }, color: '#777', maxTicksLimit: 6 },
-          grid: { display: false },
-          title: { display: true, text: 'Years',
-                   font: { family: 'Inter', size: 11 }, color: '#777' },
-        },
+        y: { type: 'logarithmic',
+             ticks: { color: '#5a5a62', font: { size: 9.5 },
+                      callback: v => {
+                        if (v >= 1e7) return '₹' + (v/1e7).toFixed(0) + 'Cr';
+                        if (v >= 1e5) return '₹' + (v/1e5).toFixed(0) + 'kL';
+                        return '₹' + v + 'L';
+                      } },
+             grid: { color: '#222226' },
+             border: { color: '#2a2a30' } },
+        x: { ticks: { color: '#5a5a62', font: { size: 9.5 }, maxTicksLimit: 6 },
+             grid: { display: false },
+             border: { color: '#2a2a30' },
+             title: { display: true, text: 'Years',
+                      color: '#5a5a62', font: { size: 10 } } },
       },
     },
   });
@@ -163,6 +338,11 @@
     if (x >= 100) return Math.round(x) + '×';
     if (x >= 10)  return Math.round(x) + '×';
     return x.toFixed(1) + '×';
+  }
+
+  function bump(el) {
+    el.classList.add('bump');
+    setTimeout(() => el.classList.remove('bump'), 180);
   }
 
   function recompute() {
@@ -178,13 +358,15 @@
     chart.update('none');
 
     const ratio = wealth[N] / wages[N];
+    const prev = ratioEl.textContent;
     if (ratio < 1) {
       ratioEl.textContent = fmtRatio(1/ratio);
-      captionEl.innerHTML = `Labour ends up <b>${fmtRatio(1/ratio)}</b> richer. (g &gt; r — wages caught up.)`;
+      captionEl.innerHTML = `Labour ends up <b>${fmtRatio(1/ratio)}</b> richer.<br>g &gt; r — wages caught up.`;
     } else {
       ratioEl.textContent = fmtRatio(ratio);
       captionEl.innerHTML = `Capital ends up <b>${fmtRatio(ratio)}</b> richer than labour.`;
     }
+    if (ratioEl.textContent !== prev) bump(ratioEl);
 
     const gap = (r - g) * 100;
     gapEl.textContent = (gap >= 0 ? '+' : '') + gap.toFixed(1).replace(/\.0$/, '');
@@ -195,11 +377,13 @@
 
   document.querySelectorAll('.preset-grid button').forEach(btn => {
     btn.addEventListener('click', () => {
+      document.querySelectorAll('.preset-grid button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
       W0 = parseFloat(btn.dataset.w);
       Y0 = parseFloat(btn.dataset.y);
       rEl.value = btn.dataset.r;
       gEl.value = btn.dataset.g;
-      scenarioEl.textContent = 'Scenario: ' + btn.dataset.name + ' — ' + btn.dataset.who;
+      scenarioEl.textContent = '// ' + btn.dataset.name.toUpperCase() + '  ·  ' + btn.dataset.who;
       recompute();
     });
   });
