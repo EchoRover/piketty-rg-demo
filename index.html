@@ -432,8 +432,8 @@
         <input type="range" id="s2" min="4" max="20" step="0.5" value="12">
       </div>
       <div class="slider-row">
-        <label><span class="name">g — growth rate</span><span class="v"><span id="g2Val">2</span>%</span></label>
-        <input type="range" id="g2" min="0.5" max="8" step="0.1" value="2">
+        <label><span class="name">g — growth rate</span><span class="v"><span id="g2Val">1.5</span>%</span></label>
+        <input type="range" id="g2" min="0.2" max="8" step="0.1" value="1.5">
       </div>
     </div>
 
@@ -648,7 +648,7 @@
 
   /* ============== LAW 2 INTERACTIVE: β = s / g ============== */
   const law2Ctx = document.getElementById('chartLaw2').getContext('2d');
-  const gAxis = Array.from({length: 76}, (_, i) => 0.5 + i * 0.1); // 0.5..8
+  const gAxis = Array.from({length: 79}, (_, i) => 0.2 + i * 0.1); // 0.2..8
   const law2Chart = new Chart(law2Ctx, {
     type: 'line',
     data: {
@@ -687,7 +687,7 @@
     g2ValEl.textContent = g.toFixed(1);
     const curve = gAxis.map(G => Math.min((s/G)*100, 1500));
     law2Chart.data.datasets[0].data = curve;
-    const idx = Math.round((g - 0.5) / 0.1);
+    const idx = Math.round((g - 0.2) / 0.1);
     const beta = (s/g) * 100;
     law2Chart.data.datasets[1].data = gAxis.map((_, i) => i === idx ? Math.min(beta, 1500) : null);
     law2Chart.update('none');
