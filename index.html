@@ -3,187 +3,254 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-<title>r &gt; g</title>
+<title>r &gt; g · The Compounding Gap</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,800;9..144,900&family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg:        #0d0d0f;
-    --panel:     #16161a;
-    --panel-2:   #1f1f24;
-    --line:      #2a2a30;
-    --ink:       #f4f1ea;
-    --muted:     #8a8a92;
-    --red:       #ff3b30;
-    --red-2:     #d62828;
-    --gold:      #f4d35e;
+    --bg-base:      #09090b;
+    --bg-surface:   #111113;
+    --bg-elevated:  #1a1a1e;
+    --bg-highlight: #242428;
+    --foreground:   #f4f4f5;
+    --border:       #27272a;
+    --border-light: #3f3f46;
+    --muted:        #71717a;
+    --accent:       #22c55e;
+    --amber:        #f59e0b;
+    --red:          #ef4444;
+    --blue:         #3b82f6;
+    --purple:       #a855f7;
+
+    --shadow-sm:    inset 0 1px 0 0 rgba(255,255,255,0.03), 0 1px 3px rgba(0,0,0,0.4);
+    --shadow-md:    inset 0 1px 0 0 rgba(255,255,255,0.04), 0 4px 12px rgba(0,0,0,0.5);
+    --shadow-lg:    inset 0 1px 0 0 rgba(255,255,255,0.05), 0 8px 24px rgba(0,0,0,0.6);
+    --shadow-inset: inset 0 2px 4px rgba(0,0,0,0.4), inset 0 -1px 0 rgba(255,255,255,0.03);
   }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--ink); font-family: 'Inter', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  html, body { margin: 0; padding: 0; }
   body {
-    background:
-      radial-gradient(ellipse 80% 50% at 50% -10%, rgba(255,59,48,0.10), transparent 60%),
-      var(--bg);
+    background: var(--bg-base);
+    color: var(--foreground);
+    font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
     min-height: 100vh;
   }
   .wrap { max-width: 540px; margin: 0 auto; padding: 28px 20px 80px; }
 
-  /* Hero */
-  .hero { margin-bottom: 28px; }
-  .eyebrow {
+  /* Top mini-header */
+  .topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 24px; padding-bottom: 18px; border-bottom: 1px solid var(--border);
+  }
+  .topbar .brand {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--red);
-    margin-bottom: 14px;
+    font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--muted);
   }
-  h1 {
-    font-family: 'Fraunces', serif;
-    font-weight: 900;
-    font-size: 46px;
-    line-height: 0.95;
-    letter-spacing: -0.025em;
-    margin: 0 0 12px;
+  .topbar .brand .dot { color: var(--accent); }
+  .topbar .pill {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 0.1em;
+    padding: 4px 10px;
+    background: rgba(34,197,94,0.10);
+    color: var(--accent);
+    border: 1px solid rgba(34,197,94,0.25);
+    border-radius: 999px;
   }
-  h1 .italic { font-style: italic; font-weight: 400; }
-  h1 .gt { color: var(--red); font-style: italic; }
-  .lede { color: var(--muted); font-size: 15px; line-height: 1.5; margin: 0; max-width: 38ch; }
 
-  /* Ratio card */
+  /* Hero */
+  .hero { margin-bottom: 28px; animation: fade-in 0.5s ease-out forwards; }
+  h1 {
+    font-weight: 800; font-size: 38px; line-height: 1.05;
+    letter-spacing: -0.025em; margin: 0 0 12px;
+  }
+  h1 .gt { color: var(--red); }
+  h1 .accent { color: var(--accent); }
+  .lede {
+    color: var(--muted); font-size: 15px; line-height: 1.55;
+    margin: 0; max-width: 42ch;
+  }
+
+  /* Stats strip */
+  .stats {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
+    margin: 24px 0;
+  }
+  .stat {
+    background: var(--bg-surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 12px 10px;
+    box-shadow: var(--shadow-sm); text-align: center;
+  }
+  .stat .v {
+    font-size: 20px; font-weight: 700; color: var(--foreground);
+    font-variant-numeric: tabular-nums;
+  }
+  .stat .l {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--muted); margin-top: 2px;
+  }
+
+  /* Ratio card — hero */
   .ratio-card {
-    margin: 28px 0 22px;
-    padding: 28px 22px;
-    background: linear-gradient(180deg, var(--panel) 0%, #121214 100%);
-    border: 1px solid var(--line);
-    border-radius: 18px;
+    margin: 24px 0;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 26px 22px;
     text-align: center;
-    position: relative;
-    overflow: hidden;
+    box-shadow: var(--shadow-md);
+    position: relative; overflow: hidden;
   }
   .ratio-card::before {
-    content: '';
-    position: absolute; inset: 0;
-    background: radial-gradient(ellipse at 50% 0%, rgba(255,59,48,0.18), transparent 70%);
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 50% 0%, rgba(239,68,68,0.10), transparent 70%);
     pointer-events: none;
   }
   .ratio-label {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
+    font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
     color: var(--muted); margin-bottom: 10px; position: relative;
   }
   .ratio-value {
-    font-family: 'Fraunces', serif; font-weight: 900;
-    font-size: 84px; line-height: 1;
-    background: linear-gradient(180deg, #ff5f57 0%, #c0392b 100%);
-    -webkit-background-clip: text; background-clip: text; color: transparent;
-    letter-spacing: -0.03em;
-    position: relative;
+    font-weight: 800; font-size: 76px; line-height: 1;
+    color: var(--red);
+    letter-spacing: -0.03em; position: relative;
     transition: transform 0.18s cubic-bezier(.34,1.56,.64,1);
   }
   .ratio-value.bump { transform: scale(1.04); }
-  .ratio-caption { font-size: 14px; color: var(--ink); margin-top: 12px; line-height: 1.45; position: relative; }
-  .ratio-caption b { color: var(--red); }
+  .ratio-caption {
+    font-size: 14px; color: var(--foreground); margin-top: 12px;
+    line-height: 1.5; position: relative;
+  }
+  .ratio-caption b { color: var(--red); font-weight: 700; }
   .scenario {
     font-family: 'JetBrains Mono', monospace;
     font-size: 10.5px; color: var(--muted);
-    margin-top: 14px; padding-top: 14px;
-    border-top: 1px solid var(--line);
-    letter-spacing: 0.05em; position: relative;
+    margin-top: 16px; padding-top: 14px;
+    border-top: 1px solid var(--border);
+    letter-spacing: 0.06em; position: relative;
+  }
+  .scenario .badge {
+    display: inline-block; padding: 2px 8px; margin-right: 8px;
+    background: rgba(34,197,94,0.10); color: var(--accent);
+    border: 1px solid rgba(34,197,94,0.25); border-radius: 6px;
+    font-size: 9.5px; letter-spacing: 0.1em;
   }
 
   /* Chart */
   .chart-wrap {
     position: relative; height: 260px;
-    background: var(--panel);
-    border: 1px solid var(--line);
-    border-radius: 16px;
-    padding: 16px 12px 8px;
-    margin-bottom: 24px;
+    background: var(--bg-surface); border: 1px solid var(--border);
+    border-radius: 16px; padding: 16px 12px 8px;
+    margin-bottom: 24px; box-shadow: var(--shadow-sm);
   }
 
-  /* Sliders */
+  /* Sliders panel */
+  .panel {
+    background: var(--bg-surface); border: 1px solid var(--border);
+    border-radius: 16px; padding: 20px 18px;
+    margin-bottom: 24px; box-shadow: var(--shadow-sm);
+  }
+  .panel-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--muted); margin: 0 0 16px;
+  }
   .slider-row { margin-bottom: 18px; }
+  .slider-row:last-child { margin-bottom: 0; }
   .slider-row label {
     display: flex; justify-content: space-between; align-items: baseline;
     font-size: 13px; font-weight: 500; margin-bottom: 8px;
-    font-family: 'JetBrains Mono', monospace; letter-spacing: 0.02em;
+    font-family: 'JetBrains Mono', monospace;
   }
   .slider-row label .name { color: var(--muted); }
-  .slider-row label .v { color: var(--red); font-weight: 700; font-variant-numeric: tabular-nums; font-size: 14px; }
+  .slider-row label .v {
+    color: var(--accent); font-weight: 700;
+    font-variant-numeric: tabular-nums; font-size: 14px;
+  }
   .slider-row input[type=range] {
     -webkit-appearance: none; appearance: none;
-    width: 100%; height: 4px;
-    background: var(--line); border-radius: 4px;
-    outline: none;
+    width: 100%; height: 6px;
+    background: var(--bg-base);
+    border-radius: 999px; outline: none;
+    box-shadow: var(--shadow-inset);
   }
   .slider-row input[type=range]::-webkit-slider-thumb {
     -webkit-appearance: none; appearance: none;
     width: 22px; height: 22px;
-    background: var(--red); border-radius: 50%;
-    cursor: pointer;
-    border: 3px solid var(--bg);
-    box-shadow: 0 0 0 1px var(--red), 0 4px 12px rgba(255,59,48,0.4);
+    background: var(--accent); border-radius: 50%;
+    cursor: pointer; border: 3px solid var(--bg-base);
+    box-shadow: 0 0 0 1px var(--accent), 0 4px 12px rgba(34,197,94,0.4);
     transition: transform 0.15s;
   }
   .slider-row input[type=range]::-webkit-slider-thumb:active { transform: scale(1.2); }
   .slider-row input[type=range]::-moz-range-thumb {
     width: 22px; height: 22px;
-    background: var(--red); border-radius: 50%;
-    cursor: pointer; border: 3px solid var(--bg);
-    box-shadow: 0 0 0 1px var(--red), 0 4px 12px rgba(255,59,48,0.4);
+    background: var(--accent); border-radius: 50%;
+    cursor: pointer; border: 3px solid var(--bg-base);
+    box-shadow: 0 0 0 1px var(--accent), 0 4px 12px rgba(34,197,94,0.4);
   }
 
   .gap-line {
     font-family: 'JetBrains Mono', monospace;
     font-size: 12px; color: var(--muted);
-    text-align: center; margin: 20px 0 8px;
+    text-align: center; margin: 14px 0 0;
+    padding-top: 14px; border-top: 1px solid var(--border);
     letter-spacing: 0.05em;
   }
-  .gap-line b { color: var(--gold); font-weight: 700; }
+  .gap-line b { color: var(--amber); font-weight: 700; }
 
-  /* Presets */
-  .preset-label {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
-    color: var(--muted); margin: 28px 0 12px; text-align: center;
-  }
+  /* Preset cards */
   .preset-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .preset-grid button {
-    padding: 14px 12px;
-    border: 1px solid var(--line);
-    background: var(--panel);
-    border-radius: 12px;
-    font-family: inherit;
-    color: var(--ink);
-    cursor: pointer; text-align: left;
-    transition: all 0.15s;
-    position: relative; overflow: hidden;
+  .preset {
+    padding: 14px 14px;
+    background: var(--bg-surface); border: 1px solid var(--border);
+    border-radius: 12px; cursor: pointer;
+    color: var(--foreground); font-family: inherit;
+    text-align: left; transition: all 0.2s ease;
+    box-shadow: var(--shadow-sm);
+    display: flex; flex-direction: column; gap: 4px;
   }
-  .preset-grid button:hover { border-color: var(--red); transform: translateY(-1px); }
-  .preset-grid button:active { transform: translateY(0); background: var(--panel-2); }
-  .preset-grid button.active { border-color: var(--red); background: linear-gradient(180deg, rgba(255,59,48,0.08), transparent); }
-  .preset-grid button .name {
-    display: block; font-size: 14px; font-weight: 700; letter-spacing: -0.01em;
+  .preset:hover {
+    background: var(--bg-elevated); border-color: var(--border-light);
+    box-shadow: var(--shadow-md); transform: translateY(-1px);
   }
-  .preset-grid button .who {
-    display: block; font-size: 10.5px; color: var(--muted); font-weight: 400;
-    margin-top: 4px; font-family: 'JetBrains Mono', monospace;
+  .preset:active { transform: translateY(0); }
+  .preset.active {
+    border-color: var(--accent);
+    box-shadow: var(--shadow-md), 0 0 0 1px rgba(34,197,94,0.25);
+    background: var(--bg-elevated);
   }
+  .preset .cat {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px; letter-spacing: 0.12em;
+    padding: 3px 8px; border-radius: 6px;
+    align-self: flex-start;
+    border: 1px solid;
+  }
+  .preset .name { font-size: 14.5px; font-weight: 700; letter-spacing: -0.01em; }
+  .preset .who {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px; color: var(--muted); font-weight: 400;
+  }
+
+  .cat-question { background: rgba(34,197,94,0.10);  color: var(--accent); border-color: rgba(34,197,94,0.25); }
+  .cat-billion  { background: rgba(239,68,68,0.10);  color: var(--red);    border-color: rgba(239,68,68,0.25); }
+  .cat-history  { background: rgba(168,85,247,0.10); color: var(--purple); border-color: rgba(168,85,247,0.25); }
 
   /* Quote */
   .quote {
-    margin: 36px 0 8px;
-    padding: 22px 20px;
-    border-left: 3px solid var(--red);
-    background: var(--panel);
-    border-radius: 0 12px 12px 0;
+    margin: 36px 0 8px; padding: 22px 22px;
+    background: var(--bg-surface); border: 1px solid var(--border);
+    border-radius: 16px; box-shadow: var(--shadow-sm);
+    border-left: 3px solid var(--accent);
   }
   .quote p {
-    font-family: 'Fraunces', serif; font-style: italic;
-    font-size: 16px; line-height: 1.4;
-    margin: 0 0 8px; color: var(--ink);
+    font-size: 15.5px; line-height: 1.5; margin: 0 0 10px;
+    color: var(--foreground);
   }
   .quote cite {
     font-family: 'JetBrains Mono', monospace;
@@ -192,12 +259,17 @@
   }
 
   footer {
-    margin-top: 40px;
-    padding-top: 22px;
-    border-top: 1px solid var(--line);
+    margin-top: 36px; padding-top: 22px;
+    border-top: 1px solid var(--border);
     font-family: 'JetBrains Mono', monospace;
     font-size: 10.5px; color: var(--muted);
     text-align: center; line-height: 1.7; letter-spacing: 0.04em;
+  }
+  footer .dot { color: var(--accent); }
+
+  @keyframes fade-in {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
   }
 </style>
 </head>
@@ -205,65 +277,90 @@
 
 <div class="wrap">
 
+  <div class="topbar">
+    <div class="brand">PIKETTY <span class="dot">·</span> Q11</div>
+    <div class="pill">LIVE</div>
+  </div>
+
   <div class="hero">
-    <div class="eyebrow">— PIKETTY · Q11</div>
-    <h1>When <span class="gt">r &gt; g,</span><br><span class="italic">the gap compounds</span> forever.</h1>
+    <h1>When <span class="gt">r &gt; g</span>,<br>the gap <span class="accent">compounds.</span></h1>
     <p class="lede">Capital grows at r. Wages grow at g. Pick a scenario — see what 50 years does to the gap.</p>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="v" id="statWealth">₹2,345L</div><div class="l">Wealth · Y50</div></div>
+    <div class="stat"><div class="v" id="statWage">₹21L</div><div class="l">Wage · Y50</div></div>
+    <div class="stat"><div class="v" id="statGap" style="color:var(--amber)">+4pp</div><div class="l">r − g</div></div>
   </div>
 
   <div class="ratio-card">
     <div class="ratio-label">▶ Wealth ÷ Wages · Year 50</div>
     <div class="ratio-value" id="ratio">110×</div>
     <div class="ratio-caption" id="caption">Capital ends up <b>110×</b> richer than labour.</div>
-    <div class="scenario" id="scenario">// THE QUESTION  ·  ₹50L flat vs ₹3L wage</div>
+    <div class="scenario" id="scenario"><span class="badge">QUESTION</span>₹50L flat vs ₹3L wage</div>
   </div>
 
   <div class="chart-wrap">
     <canvas id="chart"></canvas>
   </div>
 
-  <div class="slider-row">
-    <label><span class="name">r — return on capital</span><span class="v"><span id="rVal">8</span>%</span></label>
-    <input type="range" id="r" min="0" max="15" step="0.5" value="8">
+  <div class="panel">
+    <div class="panel-title">// CONTROLS</div>
+    <div class="slider-row">
+      <label><span class="name">r — return on capital</span><span class="v"><span id="rVal">8</span>%</span></label>
+      <input type="range" id="r" min="0" max="15" step="0.5" value="8">
+    </div>
+    <div class="slider-row">
+      <label><span class="name">g — wage growth</span><span class="v"><span id="gVal">4</span>%</span></label>
+      <input type="range" id="g" min="0" max="15" step="0.5" value="4">
+    </div>
+    <p class="gap-line">r − g = <b><span id="gap">+4</span> pp/year</b></p>
   </div>
 
-  <div class="slider-row">
-    <label><span class="name">g — wage growth</span><span class="v"><span id="gVal">4</span>%</span></label>
-    <input type="range" id="g" min="0" max="15" step="0.5" value="4">
-  </div>
-
-  <p class="gap-line">r − g = <b><span id="gap">+4</span> pp/year</b></p>
-
-  <div class="preset-label">▼ TRY A SCENARIO</div>
-  <div class="preset-grid">
-    <button data-w="50"      data-y="3" data-r="8" data-g="4" data-name="The Question" data-who="₹50L flat · ₹3L wage" class="active">
-      <span class="name">The Question</span><span class="who">₹50L flat · ₹3L wage</span>
-    </button>
-    <button data-w="3360000" data-y="6" data-r="8" data-g="5" data-name="vs Elon Musk" data-who="Tesla / X · ~$400B">
-      <span class="name">vs Elon Musk</span><span class="who">Tesla / X · ~$400B</span>
-    </button>
-    <button data-w="1840000" data-y="6" data-r="8" data-g="5" data-name="vs Jeff Bezos" data-who="Amazon · ~$220B">
-      <span class="name">vs Jeff Bezos</span><span class="who">Amazon · ~$220B</span>
-    </button>
-    <button data-w="1680000" data-y="6" data-r="8" data-g="5" data-name="vs Zuckerberg" data-who="Meta · ~$200B">
-      <span class="name">vs Zuckerberg</span><span class="who">Meta · ~$200B</span>
-    </button>
-    <button data-w="1260000" data-y="6" data-r="8" data-g="5" data-name="vs Larry Page" data-who="Google · ~$150B">
-      <span class="name">vs Larry Page</span><span class="who">Google · ~$150B</span>
-    </button>
-    <button data-w="50"      data-y="20" data-r="3" data-g="5" data-name="France 1950" data-who="g > r — labour wins">
-      <span class="name">France 1950</span><span class="who">g &gt; r — labour wins</span>
-    </button>
+  <div class="panel">
+    <div class="panel-title">// SCENARIOS</div>
+    <div class="preset-grid">
+      <button class="preset active" data-w="50"      data-y="3"  data-r="8" data-g="4" data-cat="QUESTION" data-cat-class="cat-question" data-name="The Question" data-who="₹50L flat · ₹3L wage">
+        <span class="cat cat-question">QUESTION</span>
+        <span class="name">The Question</span>
+        <span class="who">₹50L flat · ₹3L wage</span>
+      </button>
+      <button class="preset" data-w="3360000" data-y="6" data-r="8" data-g="5" data-cat="BILLIONAIRE" data-cat-class="cat-billion" data-name="vs Elon Musk" data-who="Tesla / X · ~$400B">
+        <span class="cat cat-billion">BILLIONAIRE</span>
+        <span class="name">vs Elon Musk</span>
+        <span class="who">Tesla / X · ~$400B</span>
+      </button>
+      <button class="preset" data-w="1840000" data-y="6" data-r="8" data-g="5" data-cat="BILLIONAIRE" data-cat-class="cat-billion" data-name="vs Jeff Bezos" data-who="Amazon · ~$220B">
+        <span class="cat cat-billion">BILLIONAIRE</span>
+        <span class="name">vs Jeff Bezos</span>
+        <span class="who">Amazon · ~$220B</span>
+      </button>
+      <button class="preset" data-w="1680000" data-y="6" data-r="8" data-g="5" data-cat="BILLIONAIRE" data-cat-class="cat-billion" data-name="vs Zuckerberg" data-who="Meta · ~$200B">
+        <span class="cat cat-billion">BILLIONAIRE</span>
+        <span class="name">vs Zuckerberg</span>
+        <span class="who">Meta · ~$200B</span>
+      </button>
+      <button class="preset" data-w="1260000" data-y="6" data-r="8" data-g="5" data-cat="BILLIONAIRE" data-cat-class="cat-billion" data-name="vs Larry Page" data-who="Google · ~$150B">
+        <span class="cat cat-billion">BILLIONAIRE</span>
+        <span class="name">vs Larry Page</span>
+        <span class="who">Google · ~$150B</span>
+      </button>
+      <button class="preset" data-w="50"      data-y="20" data-r="3" data-g="5" data-cat="HISTORY" data-cat-class="cat-history" data-name="France 1950" data-who="g > r — labour wins">
+        <span class="cat cat-history">HISTORY</span>
+        <span class="name">France 1950</span>
+        <span class="who">g &gt; r — labour wins</span>
+      </button>
+    </div>
   </div>
 
   <blockquote class="quote">
     <p>"In a quasi-stagnant society, wealth accumulated in the past will inevitably acquire disproportionate importance."</p>
-    <cite>— PIKETTY, CAPITAL IN THE 21ST CENTURY · 2014</cite>
+    <cite>— PIKETTY · CAPITAL IN THE 21ST CENTURY · 2014</cite>
   </blockquote>
 
   <footer>
-    AHUL213 MACROECONOMICS · Q11<br>
-    JAMES · EVAN · SUMEDH<br>
+    AHUL213 MACROECONOMICS <span class="dot">·</span> Q11<br>
+    JAMES <span class="dot">·</span> EVAN <span class="dot">·</span> SUMEDH<br>
     04 MAY 2026
   </footer>
 
@@ -280,11 +377,12 @@
   const rValEl = $('rVal'), gValEl = $('gVal');
   const ratioEl = $('ratio'), captionEl = $('caption');
   const gapEl = $('gap'), scenarioEl = $('scenario');
+  const statW = $('statWealth'), statY = $('statWage'), statG = $('statGap');
 
   const ctx = $('chart').getContext('2d');
   const labels = Array.from({length: N + 1}, (_, i) => i);
 
-  Chart.defaults.color = '#8a8a92';
+  Chart.defaults.color = '#71717a';
   Chart.defaults.font.family = "'Inter', system-ui";
 
   const chart = new Chart(ctx, {
@@ -292,14 +390,12 @@
     data: {
       labels,
       datasets: [
-        { label: 'Capital wealth',
-          data: [],
-          borderColor: '#ff3b30',
-          backgroundColor: 'rgba(255, 59, 48, 0.12)',
+        { label: 'Capital wealth', data: [],
+          borderColor: '#ef4444',
+          backgroundColor: 'rgba(239, 68, 68, 0.10)',
           borderWidth: 2.5, pointRadius: 0, fill: true, tension: 0.15 },
-        { label: 'Labour wages',
-          data: [],
-          borderColor: '#f4f1ea',
+        { label: 'Labour wages', data: [],
+          borderColor: '#22c55e',
           borderWidth: 2.5, pointRadius: 0, tension: 0.15 },
       ],
     },
@@ -308,25 +404,25 @@
       animation: { duration: 220, easing: 'easeOutCubic' },
       plugins: {
         legend: { position: 'top', align: 'start',
-                  labels: { color: '#8a8a92', font: { size: 10.5, weight: '500' },
-                            boxWidth: 12, boxHeight: 6, usePointStyle: false, padding: 12 } },
+                  labels: { color: '#71717a', font: { size: 10.5, weight: '500' },
+                            boxWidth: 12, boxHeight: 6, padding: 12 } },
         tooltip: { enabled: false },
       },
       scales: {
         y: { type: 'logarithmic',
-             ticks: { color: '#5a5a62', font: { size: 9.5 },
+             ticks: { color: '#52525a', font: { size: 9.5 },
                       callback: v => {
                         if (v >= 1e7) return '₹' + (v/1e7).toFixed(0) + 'Cr';
                         if (v >= 1e5) return '₹' + (v/1e5).toFixed(0) + 'kL';
                         return '₹' + v + 'L';
                       } },
-             grid: { color: '#222226' },
-             border: { color: '#2a2a30' } },
-        x: { ticks: { color: '#5a5a62', font: { size: 9.5 }, maxTicksLimit: 6 },
+             grid: { color: '#1a1a1e' },
+             border: { color: '#27272a' } },
+        x: { ticks: { color: '#52525a', font: { size: 9.5 }, maxTicksLimit: 6 },
              grid: { display: false },
-             border: { color: '#2a2a30' },
+             border: { color: '#27272a' },
              title: { display: true, text: 'Years',
-                      color: '#5a5a62', font: { size: 10 } } },
+                      color: '#52525a', font: { size: 10 } } },
       },
     },
   });
@@ -338,6 +434,12 @@
     if (x >= 100) return Math.round(x) + '×';
     if (x >= 10)  return Math.round(x) + '×';
     return x.toFixed(1) + '×';
+  }
+
+  function fmtMoney(v) {
+    if (v >= 1e7) return '₹' + (v/1e7).toFixed(1) + 'Cr';
+    if (v >= 1e3) return '₹' + (v/1e3).toFixed(1) + 'kL';
+    return '₹' + Math.round(v) + 'L';
   }
 
   function bump(el) {
@@ -357,33 +459,43 @@
     chart.data.datasets[1].data = wages;
     chart.update('none');
 
+    statW.textContent = fmtMoney(wealth[N]);
+    statY.textContent = fmtMoney(wages[N]);
+
     const ratio = wealth[N] / wages[N];
     const prev = ratioEl.textContent;
     if (ratio < 1) {
       ratioEl.textContent = fmtRatio(1/ratio);
-      captionEl.innerHTML = `Labour ends up <b>${fmtRatio(1/ratio)}</b> richer.<br>g &gt; r — wages caught up.`;
+      ratioEl.style.color = 'var(--accent)';
+      captionEl.innerHTML = `Labour ends up <b style="color:var(--accent)">${fmtRatio(1/ratio)}</b> richer.<br>g &gt; r — wages caught up.`;
     } else {
       ratioEl.textContent = fmtRatio(ratio);
+      ratioEl.style.color = 'var(--red)';
       captionEl.innerHTML = `Capital ends up <b>${fmtRatio(ratio)}</b> richer than labour.`;
     }
     if (ratioEl.textContent !== prev) bump(ratioEl);
 
     const gap = (r - g) * 100;
+    const gapStr = (gap >= 0 ? '+' : '') + gap.toFixed(1).replace(/\.0$/, '') + 'pp';
     gapEl.textContent = (gap >= 0 ? '+' : '') + gap.toFixed(1).replace(/\.0$/, '');
+    statG.textContent = gapStr;
+    statG.style.color = gap >= 0 ? 'var(--amber)' : 'var(--accent)';
   }
 
   rEl.addEventListener('input', recompute);
   gEl.addEventListener('input', recompute);
 
-  document.querySelectorAll('.preset-grid button').forEach(btn => {
+  document.querySelectorAll('.preset').forEach(btn => {
     btn.addEventListener('click', () => {
-      document.querySelectorAll('.preset-grid button').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.preset').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       W0 = parseFloat(btn.dataset.w);
       Y0 = parseFloat(btn.dataset.y);
       rEl.value = btn.dataset.r;
       gEl.value = btn.dataset.g;
-      scenarioEl.textContent = '// ' + btn.dataset.name.toUpperCase() + '  ·  ' + btn.dataset.who;
+      const cat = btn.dataset.cat;
+      const catCls = btn.dataset.catClass;
+      scenarioEl.innerHTML = `<span class="badge ${catCls}">${cat}</span>${btn.dataset.who}`;
       recompute();
     });
   });
