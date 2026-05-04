@@ -241,7 +241,7 @@
   .cat-billion  { background: rgba(239,68,68,0.10);  color: var(--red);    border-color: rgba(239,68,68,0.25); }
   .cat-history  { background: rgba(168,85,247,0.10); color: var(--purple); border-color: rgba(168,85,247,0.25); }
 
-  /* Laws */
+  /* Laws — interactive */
   .law {
     background: var(--bg-elevated); border: 1px solid var(--border);
     border-radius: 12px; padding: 18px 18px 16px;
@@ -250,70 +250,41 @@
   .law:last-child { margin-bottom: 0; }
   .law-tag {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 9.5px; letter-spacing: 0.18em; text-transform: uppercase;
-    color: var(--accent); margin-bottom: 10px;
+    font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 12px;
   }
   .law-tag.law-2 { color: var(--blue); }
   .law-tag.law-3 { color: var(--amber); }
-  .formula {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 26px; font-weight: 700;
-    text-align: center;
-    color: var(--foreground);
-    padding: 14px 0;
-    margin: 0 0 12px;
+  .lawchart-wrap {
+    position: relative; height: 180px;
     background: var(--bg-base);
-    border-radius: 10px;
+    border-radius: 10px; padding: 10px 8px 4px;
     box-shadow: var(--shadow-inset);
-    letter-spacing: 0.04em;
+    margin-bottom: 14px;
   }
-  .formula .sym { color: var(--accent); }
-  .formula.law-2 .sym { color: var(--blue); }
-  .formula.law-3 .sym { color: var(--amber); }
+  .law-output {
+    font-family: 'JetBrains Mono', monospace;
+    text-align: center; padding: 12px 0;
+    margin-bottom: 14px;
+    background: var(--bg-base);
+    border-radius: 10px; box-shadow: var(--shadow-inset);
+    font-size: 14px; color: var(--muted); letter-spacing: 0.04em;
+  }
+  .law-output .lo-val {
+    font-size: 26px; font-weight: 800; color: var(--accent);
+    margin: 0 4px; letter-spacing: -0.01em;
+  }
+  .law-output.law-2 .lo-val { color: var(--blue); }
+  .law-output .lo-sub {
+    display: block; font-size: 10px; color: var(--muted);
+    margin-top: 4px; letter-spacing: 0.06em;
+  }
+  .law .slider-row { margin-bottom: 12px; }
+  .law .slider-row:last-child { margin-bottom: 0; }
   .law-text {
     font-size: 13.5px; line-height: 1.55;
-    color: var(--foreground);
-    margin: 0 0 8px;
+    color: var(--foreground); margin: 0;
   }
-  .law-text b { color: var(--foreground); }
-  .law-meaning {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px; color: var(--muted);
-    line-height: 1.6;
-    padding-top: 10px; border-top: 1px solid var(--border);
-  }
-  .law-meaning .k { color: var(--accent); font-weight: 700; }
-  .law-meaning.law-2 .k { color: var(--blue); }
-  .law-meaning.law-3 .k { color: var(--amber); }
-
-  .beta-arc {
-    margin-top: 16px;
-    background: var(--bg-base); border: 1px solid var(--border);
-    border-radius: 10px; padding: 14px 14px;
-    box-shadow: var(--shadow-inset);
-  }
-  .beta-arc-title {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 9.5px; letter-spacing: 0.18em; text-transform: uppercase;
-    color: var(--muted); margin-bottom: 10px;
-  }
-  .beta-row {
-    display: grid; grid-template-columns: 60px 1fr 70px;
-    align-items: center; gap: 10px; margin-bottom: 6px;
-    font-family: 'JetBrains Mono', monospace; font-size: 12px;
-  }
-  .beta-row:last-child { margin-bottom: 0; }
-  .beta-year { color: var(--muted); font-weight: 500; }
-  .beta-bar {
-    height: 8px; border-radius: 4px;
-    background: var(--bg-elevated);
-    overflow: hidden; position: relative;
-  }
-  .beta-bar-fill {
-    height: 100%; border-radius: 4px;
-    background: linear-gradient(90deg, var(--accent), var(--red));
-  }
-  .beta-val { color: var(--foreground); font-weight: 700; text-align: right; }
 
   /* Quote */
   .quote {
@@ -428,43 +399,50 @@
   </div>
 
   <div class="panel">
-    <div class="panel-title">// PIKETTY'S TWO LAWS</div>
+    <div class="panel-title">// PIKETTY'S TWO LAWS · INTERACTIVE</div>
 
+    <!-- LAW 1: α = r · β -->
     <div class="law">
-      <div class="law-tag">▶ FIRST LAW · IDENTITY</div>
-      <div class="formula"><span class="sym">α</span> = <span class="sym">r</span> · <span class="sym">β</span></div>
-      <p class="law-text">Capital's slice of national income equals the rate of return times the wealth-to-income ratio.</p>
-      <div class="law-meaning">
-        <span class="k">α</span> capital's share of income (e.g. 35%)<br>
-        <span class="k">r</span> rate of return on capital (~5%)<br>
-        <span class="k">β</span> wealth ÷ annual income (e.g. 700%)
+      <div class="law-tag">▶ FIRST LAW · α = r · β</div>
+      <div class="lawchart-wrap"><canvas id="chartLaw1"></canvas></div>
+      <div class="law-output">
+        α = <span id="alphaOut" class="lo-val">35%</span>
+        <span class="lo-sub">capital's share of national income</span>
+      </div>
+      <div class="slider-row">
+        <label><span class="name">r — return on capital</span><span class="v"><span id="r1Val">5</span>%</span></label>
+        <input type="range" id="r1" min="2" max="10" step="0.5" value="5">
+      </div>
+      <div class="slider-row">
+        <label><span class="name">β — wealth ÷ income</span><span class="v"><span id="b1Val">700</span>%</span></label>
+        <input type="range" id="b1" min="100" max="900" step="10" value="700">
+      </div>
+    </div>
+
+    <!-- LAW 2: β = s / g -->
+    <div class="law">
+      <div class="law-tag law-2">▶ SECOND LAW · β = s / g</div>
+      <div class="lawchart-wrap"><canvas id="chartLaw2"></canvas></div>
+      <div class="law-output law-2">
+        β = <span id="betaOut" class="lo-val">600%</span>
+        <span class="lo-sub">wealth-to-income ratio (long run)</span>
+      </div>
+      <div class="slider-row">
+        <label><span class="name">s — saving rate</span><span class="v"><span id="s2Val">12</span>%</span></label>
+        <input type="range" id="s2" min="4" max="20" step="0.5" value="12">
+      </div>
+      <div class="slider-row">
+        <label><span class="name">g — growth rate</span><span class="v"><span id="g2Val">2</span>%</span></label>
+        <input type="range" id="g2" min="0.5" max="8" step="0.1" value="2">
       </div>
     </div>
 
     <div class="law">
-      <div class="law-tag law-2">▶ SECOND LAW · LONG-RUN</div>
-      <div class="formula law-2"><span class="sym">β</span> = <span class="sym">s</span> / <span class="sym">g</span></div>
-      <p class="law-text">In the long run, the wealth pile settles at the saving rate divided by the growth rate. <b>Slow growth → β explodes.</b></p>
-      <div class="law-meaning law-2">
-        <span class="k">s</span> saving rate (~12%)<br>
-        <span class="k">g</span> growth rate of output (~2%)<br>
-        s=12, g=2 &nbsp;⇒&nbsp; β = 600%
-      </div>
-    </div>
-
-    <div class="law">
-      <div class="law-tag law-3">▶ COMBINED · THE STRUCTURAL TRAP</div>
-      <div class="formula law-3"><span class="sym">α</span> = <span class="sym">r</span> · <span class="sym">s</span> / <span class="sym">g</span></div>
-      <p class="law-text">Capital's slice rises whenever <b>r is high</b>, <b>savings are high</b>, or <b>growth is slow</b>. All three describe a slow-growing rentier economy.</p>
-    </div>
-
-    <div class="beta-arc">
-      <div class="beta-arc-title">// β EUROPE · 1870–2020</div>
-      <div class="beta-row"><span class="beta-year">1870</span><span class="beta-bar"><span class="beta-bar-fill" style="width:86%"></span></span><span class="beta-val">690%</span></div>
-      <div class="beta-row"><span class="beta-year">1910</span><span class="beta-bar"><span class="beta-bar-fill" style="width:88%"></span></span><span class="beta-val">700%</span></div>
-      <div class="beta-row"><span class="beta-year">1950</span><span class="beta-bar"><span class="beta-bar-fill" style="width:31%"></span></span><span class="beta-val">250%</span></div>
-      <div class="beta-row"><span class="beta-year">1990</span><span class="beta-bar"><span class="beta-bar-fill" style="width:48%"></span></span><span class="beta-val">380%</span></div>
-      <div class="beta-row"><span class="beta-year">2020</span><span class="beta-bar"><span class="beta-bar-fill" style="width:73%"></span></span><span class="beta-val">580%</span></div>
+      <div class="law-tag law-3">▶ HISTORICAL β · EUROPE 1870–2020</div>
+      <div class="lawchart-wrap" style="height:200px"><canvas id="chartHistory"></canvas></div>
+      <p class="law-text" style="margin-top:10px;text-align:center;font-size:12px;color:var(--muted)">
+        β rose, crashed with wars + tax, climbing again with rollback.
+      </p>
     </div>
   </div>
 
@@ -616,6 +594,137 @@
   });
 
   recompute();
+
+  /* ============== LAW 1 INTERACTIVE: α = r · β ============== */
+  const law1Ctx = document.getElementById('chartLaw1').getContext('2d');
+  const betaAxis = Array.from({length: 81}, (_, i) => 100 + i * 10); // 100..900
+  const law1Chart = new Chart(law1Ctx, {
+    type: 'line',
+    data: {
+      labels: betaAxis,
+      datasets: [
+        { label: 'α at chosen r',
+          data: [],
+          borderColor: '#22c55e', backgroundColor: 'rgba(34,197,94,0.12)',
+          borderWidth: 2.5, pointRadius: 0, fill: true, tension: 0 },
+        { label: 'current point', data: [],
+          borderColor: '#22c55e', backgroundColor: '#22c55e',
+          borderWidth: 0, pointRadius: 6, pointHoverRadius: 6,
+          showLine: false },
+      ],
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      animation: { duration: 150 },
+      plugins: { legend: { display: false }, tooltip: { enabled: false } },
+      scales: {
+        y: { ticks: { color:'#52525a', font:{size:9}, callback: v=>v+'%' },
+             grid: { color:'#1a1a1e' }, border:{color:'#27272a'},
+             title: {display:true, text:'α (%)', color:'#52525a', font:{size:9.5}} },
+        x: { ticks: { color:'#52525a', font:{size:9}, maxTicksLimit:5, callback: v=>betaAxis[v]+'%' },
+             grid: { display:false }, border:{color:'#27272a'},
+             title: {display:true, text:'β (wealth÷income, %)', color:'#52525a', font:{size:9.5}} },
+      },
+    },
+  });
+  const r1El = document.getElementById('r1'), b1El = document.getElementById('b1');
+  const r1ValEl = document.getElementById('r1Val'), b1ValEl = document.getElementById('b1Val');
+  const alphaOut = document.getElementById('alphaOut');
+  function updateLaw1() {
+    const r = parseFloat(r1El.value) / 100;
+    const b = parseFloat(b1El.value);
+    r1ValEl.textContent = (r*100).toFixed(r*100%1?1:0);
+    b1ValEl.textContent = b;
+    const curve = betaAxis.map(B => (r * B));
+    law1Chart.data.datasets[0].data = curve;
+    const idx = (b - 100) / 10;
+    law1Chart.data.datasets[1].data = betaAxis.map((_, i) => i === idx ? r * b : null);
+    law1Chart.update('none');
+    alphaOut.textContent = (r * b).toFixed(1) + '%';
+  }
+  r1El.addEventListener('input', updateLaw1);
+  b1El.addEventListener('input', updateLaw1);
+  updateLaw1();
+
+  /* ============== LAW 2 INTERACTIVE: β = s / g ============== */
+  const law2Ctx = document.getElementById('chartLaw2').getContext('2d');
+  const gAxis = Array.from({length: 76}, (_, i) => 0.5 + i * 0.1); // 0.5..8
+  const law2Chart = new Chart(law2Ctx, {
+    type: 'line',
+    data: {
+      labels: gAxis.map(v => v.toFixed(1)),
+      datasets: [
+        { label: 'β curve at s', data: [],
+          borderColor: '#3b82f6', backgroundColor: 'rgba(59,130,246,0.12)',
+          borderWidth: 2.5, pointRadius: 0, fill: true, tension: 0.1 },
+        { label: 'current point', data: [],
+          borderColor: '#3b82f6', backgroundColor: '#3b82f6',
+          borderWidth: 0, pointRadius: 6, showLine: false },
+      ],
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      animation: { duration: 150 },
+      plugins: { legend: { display: false }, tooltip: { enabled: false } },
+      scales: {
+        y: { ticks: { color:'#52525a', font:{size:9}, callback: v=>v+'%' },
+             grid: { color:'#1a1a1e' }, border:{color:'#27272a'},
+             max: 1500,
+             title: {display:true, text:'β (%)', color:'#52525a', font:{size:9.5}} },
+        x: { ticks: { color:'#52525a', font:{size:9}, maxTicksLimit:6 },
+             grid: { display:false }, border:{color:'#27272a'},
+             title: {display:true, text:'g — growth rate (%)', color:'#52525a', font:{size:9.5}} },
+      },
+    },
+  });
+  const s2El = document.getElementById('s2'), g2El = document.getElementById('g2');
+  const s2ValEl = document.getElementById('s2Val'), g2ValEl = document.getElementById('g2Val');
+  const betaOut = document.getElementById('betaOut');
+  function updateLaw2() {
+    const s = parseFloat(s2El.value);
+    const g = parseFloat(g2El.value);
+    s2ValEl.textContent = s.toFixed(s%1?1:0);
+    g2ValEl.textContent = g.toFixed(1);
+    const curve = gAxis.map(G => Math.min((s/G)*100, 1500));
+    law2Chart.data.datasets[0].data = curve;
+    const idx = Math.round((g - 0.5) / 0.1);
+    const beta = (s/g) * 100;
+    law2Chart.data.datasets[1].data = gAxis.map((_, i) => i === idx ? Math.min(beta, 1500) : null);
+    law2Chart.update('none');
+    betaOut.textContent = beta < 10000 ? Math.round(beta) + '%' : '∞';
+  }
+  s2El.addEventListener('input', updateLaw2);
+  g2El.addEventListener('input', updateLaw2);
+  updateLaw2();
+
+  /* ============== HISTORICAL β · EUROPE ============== */
+  const histCtx = document.getElementById('chartHistory').getContext('2d');
+  const histYears = [1870, 1910, 1930, 1950, 1970, 1990, 2010, 2020];
+  const histBeta  = [690,  700,  500,  250,  320,  380,  500,  580];
+  new Chart(histCtx, {
+    type: 'line',
+    data: {
+      labels: histYears,
+      datasets: [{
+        data: histBeta,
+        borderColor: '#f59e0b',
+        backgroundColor: 'rgba(245,158,11,0.10)',
+        borderWidth: 2.5, fill: true, tension: 0.25,
+        pointRadius: 4, pointBackgroundColor: '#f59e0b',
+      }],
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false }, tooltip: { enabled: false } },
+      scales: {
+        y: { ticks: { color:'#52525a', font:{size:9}, callback: v=>v+'%' },
+             grid: { color:'#1a1a1e' }, border:{color:'#27272a'},
+             title: {display:true, text:'β (%)', color:'#52525a', font:{size:9.5}} },
+        x: { ticks: { color:'#52525a', font:{size:9}, maxTicksLimit:8 },
+             grid: { display:false }, border:{color:'#27272a'} },
+      },
+    },
+  });
 </script>
 
 </body>
