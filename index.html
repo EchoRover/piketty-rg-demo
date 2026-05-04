@@ -1,449 +1,211 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-<title>Are You Capital or Labour? — Piketty r &gt; g</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+<title>r &gt; g — try it</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
   :root {
-    --accent: #c0392b;
-    --ink: #1a1a1a;
-    --muted: #666;
-    --bg: #ffffff;
-    --line: #e5e5e5;
-    --soft: #faf7f6;
+    --red:   #c0392b;
+    --ink:   #1a1a1a;
+    --muted: #777;
+    --line:  #e5e5e5;
   }
   * { box-sizing: border-box; }
-  html, body {
-    margin: 0; padding: 0;
-    background: var(--bg);
-    color: var(--ink);
-    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    font-size: 16px;
-    line-height: 1.5;
-  }
-  .wrap {
-    max-width: 720px;
-    margin: 0 auto;
-    padding: 18px 16px 40px;
-  }
-  header h1 {
-    font-size: 22px;
-    margin: 0 0 4px;
-    font-weight: 700;
-    letter-spacing: -0.01em;
-  }
-  header h1 .accent { color: var(--accent); }
-  header p.sub {
-    margin: 0 0 16px;
-    color: var(--muted);
-    font-size: 13px;
-  }
-  .presets {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 6px;
-    margin-bottom: 14px;
-  }
-  .presets button {
-    background: var(--soft);
-    border: 1px solid var(--line);
-    color: var(--ink);
-    padding: 9px 6px;
-    border-radius: 8px;
-    font-family: inherit;
-    font-size: 12px;
-    font-weight: 600;
-    cursor: pointer;
-    line-height: 1.2;
-    transition: all 0.15s;
-  }
-  .presets button:hover, .presets button:active {
-    background: var(--accent);
-    color: #fff;
-    border-color: var(--accent);
-  }
-  .chart-card {
-    border: 1px solid var(--line);
-    border-radius: 10px;
-    padding: 12px 10px 10px;
-    background: #fff;
-    margin-bottom: 12px;
-  }
-  .chart-head {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 6px;
-  }
-  .chart-head h2 {
-    font-size: 13px;
-    margin: 0;
-    color: var(--muted);
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-  }
-  .scale-toggle {
-    background: #fff;
-    border: 1px solid var(--line);
-    color: var(--ink);
-    padding: 5px 10px;
-    border-radius: 6px;
-    font-family: inherit;
-    font-size: 11px;
-    font-weight: 600;
-    cursor: pointer;
-  }
-  .scale-toggle.active {
-    background: var(--accent);
-    color: #fff;
-    border-color: var(--accent);
-  }
-  #chartBox { position: relative; height: 260px; width: 100%; }
-  .stats {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-    margin-bottom: 14px;
-  }
-  .stat {
-    border: 1px solid var(--line);
-    border-radius: 8px;
-    padding: 10px 12px;
-    background: #fff;
-  }
-  .stat .label {
-    font-size: 11px;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    font-weight: 500;
-  }
-  .stat .val {
-    font-size: 18px;
-    font-weight: 700;
-    margin-top: 2px;
-    font-variant-numeric: tabular-nums;
-  }
-  .stat.wealth .val { color: var(--accent); }
-  .stat.full {
-    grid-column: 1 / -1;
-    background: var(--soft);
-    border-color: var(--accent);
-  }
-  .stat.full .val { font-size: 15px; line-height: 1.35; color: var(--ink); }
-  .controls {
-    border: 1px solid var(--line);
-    border-radius: 10px;
-    padding: 14px 14px 6px;
-    background: #fff;
-    margin-bottom: 12px;
-  }
-  .ctrl {
-    margin-bottom: 12px;
-  }
-  .ctrl-head {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    margin-bottom: 4px;
-  }
-  .ctrl-head label {
-    font-size: 13px;
-    font-weight: 600;
-  }
-  .ctrl-head .v {
-    font-variant-numeric: tabular-nums;
-    font-weight: 600;
-    color: var(--accent);
-    font-size: 13px;
-  }
-  input[type=range] {
-    width: 100%;
-    -webkit-appearance: none;
-    appearance: none;
-    height: 4px;
-    background: var(--line);
-    border-radius: 2px;
-    outline: none;
-  }
-  input[type=range]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 22px; height: 22px;
-    background: var(--accent);
-    border-radius: 50%;
-    cursor: pointer;
-    border: 2px solid #fff;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-  }
-  input[type=range]::-moz-range-thumb {
-    width: 22px; height: 22px;
-    background: var(--accent);
-    border-radius: 50%;
-    cursor: pointer;
-    border: 2px solid #fff;
-  }
-  .explain {
-    background: var(--soft);
-    border-left: 3px solid var(--accent);
-    padding: 10px 12px;
-    border-radius: 4px;
-    font-size: 13px;
-    color: #333;
-    margin-bottom: 18px;
-    line-height: 1.45;
-  }
-  .explain strong { color: var(--accent); }
-  footer {
-    border-top: 1px solid var(--line);
-    padding-top: 12px;
-    font-size: 11px;
-    color: var(--muted);
-    line-height: 1.5;
-  }
-  footer .cite { font-style: italic; margin-top: 4px; display: block; }
-  @media (min-width: 600px) {
-    header h1 { font-size: 26px; }
-    .stats { grid-template-columns: repeat(3, 1fr); }
-    .stat.full { grid-column: 1 / -1; }
-    #chartBox { height: 320px; }
-  }
+  html, body { margin: 0; padding: 0; background: #fff; color: var(--ink); font-family: 'Inter', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  body { padding: 22px 18px 60px; max-width: 520px; margin: 0 auto; }
+  h1 { font-size: 22px; font-weight: 800; margin: 0 0 4px; letter-spacing: -0.01em; }
+  h1 .red { color: var(--red); }
+  .sub { color: var(--muted); font-size: 13px; margin: 0 0 22px; }
+  .ratio-card { background: #fafafa; border: 1px solid var(--line); border-radius: 14px; padding: 18px; text-align: center; margin-bottom: 22px; }
+  .ratio-label { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+  .ratio-value { font-size: 56px; font-weight: 800; color: var(--red); line-height: 1; }
+  .ratio-caption { font-size: 13px; color: var(--ink); margin-top: 8px; }
+  .scenario { font-size: 12px; color: var(--muted); margin-top: 4px; }
+  .chart-wrap { position: relative; height: 240px; margin-bottom: 22px; }
+  .slider-row { margin-bottom: 16px; }
+  .slider-row label { display: flex; justify-content: space-between; align-items: baseline; font-size: 14px; font-weight: 600; margin-bottom: 6px; }
+  .slider-row label .v { color: var(--red); font-weight: 800; font-variant-numeric: tabular-nums; }
+  .slider-row input[type=range] { width: 100%; accent-color: var(--red); height: 30px; }
+  .preset-label { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin: 18px 0 8px; text-align: center; }
+  .preset-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .preset-grid button { padding: 12px 8px; border: 1px solid var(--line); background: white; border-radius: 10px; font-family: inherit; font-size: 13px; font-weight: 600; color: var(--ink); cursor: pointer; -webkit-tap-highlight-color: transparent; text-align: left; }
+  .preset-grid button:active { background: #f3f3f3; }
+  .preset-grid button .name { display: block; }
+  .preset-grid button .who { display: block; font-size: 10px; color: var(--muted); font-weight: 400; margin-top: 2px; letter-spacing: 0; text-transform: none; }
+  .gap-line { font-size: 13px; color: var(--muted); text-align: center; margin: 12px 0 4px; }
+  .gap-line b { color: var(--ink); font-weight: 700; }
+  footer { margin-top: 32px; font-size: 11px; color: var(--muted); text-align: center; line-height: 1.5; }
 </style>
 </head>
 <body>
-<div class="wrap">
-  <header>
-    <h1>Are You <span class="accent">Capital</span> or <span style="color:#1a1a1a">Labour</span>?</h1>
-    <p class="sub">An interactive Piketty r &gt; g visualizer. Move the sliders. Watch the gap.</p>
-  </header>
 
-  <div class="presets">
-    <button data-preset="question">The Question</button>
-    <button data-preset="ambani">You vs Ambani</button>
-    <button data-preset="france">France 1950</button>
-  </div>
+<h1>If <span class="red">r &gt; g</span>, the gap compounds.</h1>
+<p class="sub">Pick a scenario, or move r and g.</p>
 
-  <div class="chart-card">
-    <div class="chart-head">
-      <h2>Wealth vs Wages over time</h2>
-      <button class="scale-toggle" id="scaleBtn">Linear</button>
-    </div>
-    <div id="chartBox"><canvas id="chart"></canvas></div>
-  </div>
-
-  <div class="stats">
-    <div class="stat wealth">
-      <div class="label">Final wealth (Capital HH)</div>
-      <div class="val" id="finalW">—</div>
-    </div>
-    <div class="stat">
-      <div class="label">Final wage (Labour HH)</div>
-      <div class="val" id="finalY">—</div>
-    </div>
-    <div class="stat">
-      <div class="label">Wealth-to-wage ratio at year N</div>
-      <div class="val" id="ratio">—</div>
-    </div>
-    <div class="stat full">
-      <div class="label">The reality</div>
-      <div class="val" id="catchup">—</div>
-    </div>
-  </div>
-
-  <div class="controls">
-    <div class="ctrl">
-      <div class="ctrl-head"><label for="W0">Starting wealth W₀</label><span class="v" id="W0v">₹50 L</span></div>
-      <input type="range" id="W0" min="0" max="1000000" step="1" value="50" />
-    </div>
-    <div class="ctrl">
-      <div class="ctrl-head"><label for="Y0">Starting wage Y₀</label><span class="v" id="Y0v">₹3 L</span></div>
-      <input type="range" id="Y0" min="0.5" max="100" step="0.5" value="3" />
-    </div>
-    <div class="ctrl">
-      <div class="ctrl-head"><label for="r">r — return on capital</label><span class="v" id="rv">8.0%</span></div>
-      <input type="range" id="r" min="0" max="15" step="0.1" value="8" />
-    </div>
-    <div class="ctrl">
-      <div class="ctrl-head"><label for="g">g — wage growth rate</label><span class="v" id="gv">4.0%</span></div>
-      <input type="range" id="g" min="0" max="15" step="0.1" value="4" />
-    </div>
-    <div class="ctrl">
-      <div class="ctrl-head"><label for="N">Years N</label><span class="v" id="Nv">50</span></div>
-      <input type="range" id="N" min="10" max="100" step="1" value="50" />
-    </div>
-  </div>
-
-  <div class="explain">
-    When <strong>r &gt; g</strong>, the wealth column compounds faster than the wage column — capital pulls ahead of labour with every passing year. This is Piketty's central claim: inequality widens not by accident, but by arithmetic.
-  </div>
-
-  <footer>
-    AHUL213 Macroeconomics · Q11 · James, Evan, Sumedh · 4 May 2026
-    <span class="cite">Piketty, T. (2014). <em>Capital in the Twenty-First Century</em>. Harvard University Press.</span>
-  </footer>
+<div class="ratio-card">
+  <div class="ratio-label">Wealth ÷ Wages after 50 years</div>
+  <div class="ratio-value" id="ratio">110×</div>
+  <div class="ratio-caption" id="caption">The capital household ends up <b>110×</b> richer than the labour household.</div>
+  <div class="scenario" id="scenario">Scenario: The Question — ₹50 L flat vs ₹3 L wage</div>
 </div>
 
+<div class="chart-wrap">
+  <canvas id="chart"></canvas>
+</div>
+
+<div class="slider-row">
+  <label><span>r — return on capital</span><span class="v"><span id="rVal">8</span>%</span></label>
+  <input type="range" id="r" min="0" max="15" step="0.5" value="8">
+</div>
+
+<div class="slider-row">
+  <label><span>g — wage growth</span><span class="v"><span id="gVal">4</span>%</span></label>
+  <input type="range" id="g" min="0" max="15" step="0.5" value="4">
+</div>
+
+<p class="gap-line">Gap = <b><span id="gap">+4</span> pp/year</b></p>
+
+<div class="preset-label">Try a Real-World Scenario</div>
+<div class="preset-grid">
+  <button data-w="50"        data-y="3" data-r="8"  data-g="4" data-name="The Question" data-who="₹50L flat vs ₹3L wage">
+    <span class="name">The Question</span><span class="who">₹50 L flat · ₹3 L wage</span>
+  </button>
+  <button data-w="3360000"   data-y="6" data-r="8"  data-g="5" data-name="vs Elon Musk" data-who="Tesla / X · ~$400 B">
+    <span class="name">vs Elon Musk</span><span class="who">Tesla / X · ~$400 B</span>
+  </button>
+  <button data-w="1840000"   data-y="6" data-r="8"  data-g="5" data-name="vs Jeff Bezos" data-who="Amazon · ~$220 B">
+    <span class="name">vs Jeff Bezos</span><span class="who">Amazon · ~$220 B</span>
+  </button>
+  <button data-w="1680000"   data-y="6" data-r="8"  data-g="5" data-name="vs Zuckerberg" data-who="Meta · ~$200 B">
+    <span class="name">vs Zuckerberg</span><span class="who">Meta · ~$200 B</span>
+  </button>
+  <button data-w="1260000"   data-y="6" data-r="8"  data-g="5" data-name="vs Larry Page" data-who="Google · ~$150 B">
+    <span class="name">vs Larry Page</span><span class="who">Google · ~$150 B</span>
+  </button>
+  <button data-w="50"        data-y="20" data-r="3" data-g="5" data-name="France 1950" data-who="g &gt; r — wages catch up">
+    <span class="name">France 1950</span><span class="who">g &gt; r — wages catch up</span>
+  </button>
+</div>
+
+<footer>
+  AHUL213 Macroeconomics · Q11 · James, Evan, Sumedh · 4 May 2026<br>
+  Based on Piketty, <i>Capital in the Twenty-First Century</i> (2014). Wealth figures: Forbes 2025, in ₹ lakh (1 lakh = 100 000).
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script>
-(function(){
-  var W0el = document.getElementById('W0');
-  var Y0el = document.getElementById('Y0');
-  var rel  = document.getElementById('r');
-  var gel  = document.getElementById('g');
-  var Nel  = document.getElementById('N');
+  const N = 50;
+  let W0 = 50;
+  let Y0 = 3;
 
-  var W0v = document.getElementById('W0v');
-  var Y0v = document.getElementById('Y0v');
-  var rv  = document.getElementById('rv');
-  var gv  = document.getElementById('gv');
-  var Nv  = document.getElementById('Nv');
+  const rEl = document.getElementById('r');
+  const gEl = document.getElementById('g');
+  const rValEl = document.getElementById('rVal');
+  const gValEl = document.getElementById('gVal');
+  const ratioEl = document.getElementById('ratio');
+  const captionEl = document.getElementById('caption');
+  const gapEl = document.getElementById('gap');
+  const scenarioEl = document.getElementById('scenario');
 
-  var finalW = document.getElementById('finalW');
-  var finalY = document.getElementById('finalY');
-  var ratioEl = document.getElementById('ratio');
-  var catchupEl = document.getElementById('catchup');
+  const ctx = document.getElementById('chart').getContext('2d');
+  const labels = Array.from({length: N + 1}, (_, i) => i);
 
-  var scaleBtn = document.getElementById('scaleBtn');
-  var logScale = false;
-
-  function fmtLakh(L){
-    // L is in lakhs. Convert smartly.
-    if (!isFinite(L)) return '∞';
-    if (L >= 1e7) return '₹' + (L/1e7).toFixed(2) + ' lakh cr';
-    if (L >= 1e5) return '₹' + (L/1e5).toFixed(2) + ' k cr';
-    if (L >= 100) return '₹' + (L/100).toFixed(2) + ' cr';
-    if (L >= 1) return '₹' + L.toFixed(2) + ' L';
-    return '₹' + (L*100000).toFixed(0);
-  }
-  function fmtNum(x){
-    if (!isFinite(x)) return '∞';
-    if (x >= 1e9) return (x/1e9).toFixed(2) + 'B×';
-    if (x >= 1e6) return (x/1e6).toFixed(2) + 'M×';
-    if (x >= 1e3) return (x/1e3).toFixed(2) + 'K×';
-    if (x >= 1) return x.toFixed(2) + '×';
-    return x.toFixed(3) + '×';
-  }
-
-  // Chart setup
-  var ctx = document.getElementById('chart').getContext('2d');
-  var chart = new Chart(ctx, {
+  const chart = new Chart(ctx, {
     type: 'line',
     data: {
-      labels: [],
+      labels,
       datasets: [
-        { label: 'Wealth (Capital HH)', data: [], borderColor: '#c0392b', backgroundColor: 'rgba(192,57,43,0.08)', borderWidth: 2.5, pointRadius: 0, fill: true, tension: 0.15 },
-        { label: 'Wage (Labour HH)',   data: [], borderColor: '#1a1a1a', backgroundColor: 'rgba(26,26,26,0.05)', borderWidth: 2.5, pointRadius: 0, fill: true, tension: 0.15, borderDash: [] }
-      ]
+        { label: 'Capital wealth',
+          data: [], borderColor: '#c0392b',
+          backgroundColor: 'rgba(192, 57, 43, 0.08)',
+          borderWidth: 3, pointRadius: 0, fill: true, tension: 0.1 },
+        { label: 'Labour wages',
+          data: [], borderColor: '#1a1a1a',
+          borderWidth: 3, pointRadius: 0, tension: 0.1 },
+      ],
     },
     options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      animation: { duration: 250 },
-      interaction: { intersect: false, mode: 'index' },
+      responsive: true, maintainAspectRatio: false,
+      animation: { duration: 200 },
       plugins: {
-        legend: {
-          display: true,
-          position: 'bottom',
-          labels: { boxWidth: 10, boxHeight: 10, font: { family: 'Inter', size: 11 }, color: '#1a1a1a' }
-        },
-        tooltip: {
-          callbacks: {
-            label: function(c){ return c.dataset.label + ': ' + fmtLakh(c.parsed.y); }
-          }
-        }
+        legend: { position: 'top', align: 'start',
+                  labels: { font: { family: 'Inter', size: 11 }, boxWidth: 14, boxHeight: 8 } },
+        tooltip: { enabled: false },
       },
       scales: {
-        x: { title: { display: true, text: 'Years', font: { size: 11 }, color: '#666' }, ticks: { color: '#666', font: { size: 10 } }, grid: { color: '#f0f0f0' } },
-        y: { type: 'linear', title: { display: true, text: '₹ lakh', font: { size: 11 }, color: '#666' }, ticks: { color: '#666', font: { size: 10 }, callback: function(v){ return fmtLakh(v); } }, grid: { color: '#f0f0f0' } }
-      }
-    }
+        y: {
+          type: 'logarithmic',
+          ticks: { font: { family: 'Inter', size: 10 }, color: '#777',
+                   callback: v => {
+                     if (v >= 1e7) return '₹' + (v/1e7).toFixed(0) + 'Cr';
+                     if (v >= 1e5) return '₹' + (v/1e5).toFixed(0) + 'kL';
+                     return '₹' + v + 'L';
+                   } },
+          grid: { color: '#f0f0f0' },
+        },
+        x: {
+          ticks: { font: { family: 'Inter', size: 10 }, color: '#777', maxTicksLimit: 6 },
+          grid: { display: false },
+          title: { display: true, text: 'Years',
+                   font: { family: 'Inter', size: 11 }, color: '#777' },
+        },
+      },
+    },
   });
 
-  function updateScale(){
-    chart.options.scales.y.type = logScale ? 'logarithmic' : 'linear';
-    scaleBtn.textContent = logScale ? 'Log' : 'Linear';
-    scaleBtn.classList.toggle('active', logScale);
-    chart.update();
+  function fmtRatio(x) {
+    if (!isFinite(x)) return '∞';
+    if (x >= 1e6) return (x/1e6).toFixed(1) + 'M×';
+    if (x >= 1e3) return (x/1e3).toFixed(1) + 'k×';
+    if (x >= 100) return Math.round(x) + '×';
+    if (x >= 10)  return Math.round(x) + '×';
+    return x.toFixed(1) + '×';
   }
-  scaleBtn.addEventListener('click', function(){ logScale = !logScale; updateScale(); });
 
-  function recompute(){
-    var W0 = parseFloat(W0el.value);
-    var Y0 = parseFloat(Y0el.value);
-    var r  = parseFloat(rel.value) / 100;
-    var g  = parseFloat(gel.value) / 100;
-    var N  = parseInt(Nel.value, 10);
+  function recompute() {
+    const r = parseFloat(rEl.value) / 100;
+    const g = parseFloat(gEl.value) / 100;
+    rValEl.textContent = (r * 100).toFixed(r * 100 % 1 ? 1 : 0);
+    gValEl.textContent = (g * 100).toFixed(g * 100 % 1 ? 1 : 0);
 
-    W0v.textContent = fmtLakh(W0);
-    Y0v.textContent = fmtLakh(Y0);
-    rv.textContent = (r*100).toFixed(1) + '%';
-    gv.textContent = (g*100).toFixed(1) + '%';
-    Nv.textContent = N;
-
-    var labels = [], wealth = [], wage = [];
-    for (var t = 0; t <= N; t++){
-      labels.push(t);
-      var w = W0 * Math.pow(1+r, t);
-      var y = Y0 * Math.pow(1+g, t);
-      // For log scale, replace zeros with tiny floor
-      if (logScale){ if (w<=0) w = 0.001; if (y<=0) y = 0.001; }
-      wealth.push(w);
-      wage.push(y);
-    }
-    chart.data.labels = labels;
+    const wealth = labels.map(n => W0 * Math.pow(1 + r, n));
+    const wages  = labels.map(n => Y0 * Math.pow(1 + g, n));
     chart.data.datasets[0].data = wealth;
-    chart.data.datasets[1].data = wage;
-    chart.update();
+    chart.data.datasets[1].data = wages;
+    chart.update('none');
 
-    var fW = wealth[wealth.length-1];
-    var fY = wage[wage.length-1];
-    finalW.textContent = fmtLakh(fW);
-    finalY.textContent = fmtLakh(fY);
-    ratioEl.textContent = fmtNum(fY > 0 ? fW/fY : Infinity);
-
-    // "Years to match capital HH's CURRENT wealth saving 100% of wages"
-    // current = W0 (today, before compounding). Saving 100% of wage at growth g.
-    // Sum_{t=0}^{T-1} Y0*(1+g)^t = W0  =>  T = log(1 + W0*g/Y0)/log(1+g)  (if g != 0)
-    var T;
-    if (Y0 <= 0) T = Infinity;
-    else if (Math.abs(g) < 1e-9) T = W0 / Y0;
-    else {
-      var inside = 1 + (W0 * g) / Y0;
-      if (inside <= 0) T = Infinity;
-      else T = Math.log(inside) / Math.log(1+g);
+    const ratio = wealth[N] / wages[N];
+    if (ratio < 1) {
+      ratioEl.textContent = fmtRatio(1/ratio);
+      captionEl.innerHTML = `Labour ends up <b>${fmtRatio(1/ratio)}</b> richer. (g &gt; r — wages caught up.)`;
+    } else {
+      ratioEl.textContent = fmtRatio(ratio);
+      captionEl.innerHTML = `Capital ends up <b>${fmtRatio(ratio)}</b> richer than labour.`;
     }
-    var Tstr = isFinite(T) ? (T >= 1000 ? Math.round(T).toLocaleString() : T.toFixed(1)) : '∞';
-    catchupEl.textContent = 'The labour HH would need ' + Tstr + ' years of saving 100% of wages just to match the capital HH’s current wealth.';
+
+    const gap = (r - g) * 100;
+    gapEl.textContent = (gap >= 0 ? '+' : '') + gap.toFixed(1).replace(/\.0$/, '');
   }
 
-  [W0el, Y0el, rel, gel, Nel].forEach(function(el){
-    el.addEventListener('input', recompute);
-  });
+  rEl.addEventListener('input', recompute);
+  gEl.addEventListener('input', recompute);
 
-  // Presets
-  function setPreset(name){
-    if (name === 'question'){
-      W0el.value = 50; Y0el.value = 3; rel.value = 8; gel.value = 4; Nel.value = 50;
-    } else if (name === 'ambani'){
-      // ₹10 lakh crore = 10,00,000 lakh = 1,000,000 lakh
-      W0el.value = 1000000; Y0el.value = 6; rel.value = 12; gel.value = 6; Nel.value = 50;
-    } else if (name === 'france'){
-      W0el.value = 50; Y0el.value = 20; rel.value = 4; gel.value = 5; Nel.value = 50;
-    }
-    recompute();
-  }
-  document.querySelectorAll('.presets button').forEach(function(b){
-    b.addEventListener('click', function(){ setPreset(b.dataset.preset); });
+  document.querySelectorAll('.preset-grid button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      W0 = parseFloat(btn.dataset.w);
+      Y0 = parseFloat(btn.dataset.y);
+      rEl.value = btn.dataset.r;
+      gEl.value = btn.dataset.g;
+      scenarioEl.textContent = 'Scenario: ' + btn.dataset.name + ' — ' + btn.dataset.who;
+      recompute();
+    });
   });
 
   recompute();
-})();
 </script>
+
 </body>
 </html>
